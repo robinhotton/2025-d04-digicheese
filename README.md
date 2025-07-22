@@ -10,8 +10,6 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 - Tests unitaires avec **pytest**
 - Typage fort, structure modulaire, normes PEP8
 
----
-
 ## ✅ Prérequis
 
 - Python 3.10+
@@ -19,8 +17,6 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 - `git` (gestion de version)
 - (Optionnel) `make` pour simplifier les commandes
 - (Recommandé) Environnement virtuel Python (`venv` ou `poetry`)
-
----
 
 ## 📁 Structure du projet
 
@@ -47,8 +43,6 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 ├── requirements.txt        # Dépendances Python
 └── README.md               # Présentation du projet
 ```
-
----
 
 ## ⚙️ Installation
 
@@ -79,8 +73,6 @@ cp .env.template .env
 # puis modifier les valeurs (DB_HOST, DB_USER, etc.)
 ```
 
----
-
 ## ▶️ Lancer le serveur API
 
 ```bash
@@ -90,15 +82,11 @@ python run.py
 * Accès à la documentation : [http://localhost:8000/docs](http://localhost:8000/docs)
 * Accès à la documentation ReDoc : [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
----
-
 ## 🧪 Lancer les tests
 
 ```bash
 pytest tests/
 ```
-
----
 
 ## 📬 Contact
 
