@@ -15,8 +15,7 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 - Python 3.10+
 - MySQL ou MariaDB (local ou distant)
 - `git` (gestion de version)
-- (Optionnel) `make` pour simplifier les commandes
-- (Recommandé) Environnement virtuel Python (`venv` ou `poetry`)
+- (Recommandé) Environnement virtuel Python (`venv`)
 
 ## 📁 Structure du projet
 
@@ -31,6 +30,7 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 │   └── routers/            # Routes API
 │
 ├── tests/
+│   ├── conftest.py         # Configuration des tests
 │   └── test_*.py           # Tests unitaires API
 │
 ├── docs/
@@ -82,10 +82,21 @@ python run.py
 * Accès à la documentation : [http://localhost:8000/docs](http://localhost:8000/docs)
 * Accès à la documentation ReDoc : [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
+> Si votre application plante, pensez à changer le port dans `run.py` avant de relancer (par défaut 8000).  
+> Cela permettra d'éviter les conflits de port.
+
 ## 🧪 Lancer les tests
+
+### Exécuter tous les tests
 
 ```bash
 pytest tests/
+```
+
+### Exécuter un test spécifique
+
+```bash
+pytest tests/test_ma_fonctionnalite.py
 ```
 
 ## 📬 Contact
