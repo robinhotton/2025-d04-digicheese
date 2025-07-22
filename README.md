@@ -5,6 +5,7 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 ## 🚀 Fonctionnalités principales
 
 - API développée avec **FastAPI**
+- Manipulation des données avec **SQLModel** _(nouvel ORM basé sur SQLAlchemy)_
 - Base de données **MySQL / MariaDB**
 - Documentation automatique avec **Swagger UI**
 - Tests unitaires avec **pytest**
