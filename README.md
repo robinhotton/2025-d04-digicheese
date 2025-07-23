@@ -25,7 +25,7 @@ Développement d'une API RESTful pour l'entreprise fictive **DigiCheese**, dans 
 ├── src/
 │   ├── main.py             # Point d'entrée FastAPI
 │   ├── database.py         # Connexion à la BDD
-│   ├── models/             # Modèles Pydantic
+│   ├── models/             # Modèles & schémas SQLModel
 │   ├── repositories/       # Accès aux données
 │   ├── services/           # Logique métier
 │   └── routers/            # Routes API

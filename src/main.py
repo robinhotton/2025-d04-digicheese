@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Depends
-from sqlmodel import SQLModel, select, Session
+from fastapi import FastAPI
+from sqlmodel import SQLModel
 
-from .database import get_db, engine
+from .routers import router
+from .database import engine
 from .models import (
     Departement,
     Commune,
@@ -20,8 +21,9 @@ from .models import (
 )
 
 app = FastAPI()
+app.include_router(router)
 SQLModel.metadata.create_all(bind=engine)
 
 @app.get("/")
-def read_root():
+def home():
     return {"response": "Hello World!"}
