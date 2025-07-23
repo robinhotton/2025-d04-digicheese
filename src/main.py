@@ -19,9 +19,13 @@ from .models import (
     RoleUtilisateur
 )
 
+from .routers import router_client, router_objet
+
 app = FastAPI()
+app.include_router(router_client)
+app.include_router(router_objet)
 SQLModel.metadata.create_all(bind=engine)
 
 @app.get("/")
-def read_root():
+def home():
     return {"response": "Hello World!"}
