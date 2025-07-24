@@ -3,22 +3,24 @@ from sqlmodel import SQLModel
 
 from .routers import router
 from .database import engine
-from .models import (
-    Departement,
-    Commune,
-    Client,
-    Commande,
-    Conditionnement,
-    Objet,
-    ObjetCond,
-    Detail,
-    DetailObjet,
-    Enseigne,
-    Poids,
-    Role,
-    Utilisateur,
-    RoleUtilisateur
-)
+from .models import Client
+
+# from .models import (
+#     Departement,
+#     Commune,
+#     Client,
+#     Commande,
+#     Conditionnement,
+#     Objet,
+#     ObjetCond,
+#     Detail,
+#     DetailObjet,
+#     Enseigne,
+#     Poids,
+#     Role,
+#     Utilisateur,
+#     RoleUtilisateur
+# )
 
 from .routers import router
 
