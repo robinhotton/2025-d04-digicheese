@@ -1,7 +1,8 @@
 from sqlmodel import Session, select
+from .abstract_repository import AbstractRepository
 from ..models import Client
 
-class ClientRepository:
+class ClientRepository(AbstractRepository):
 
     @staticmethod
     def get_all(session: Session, limit: int = 5):
@@ -11,17 +12,16 @@ class ClientRepository:
     
     @staticmethod
     def get_by_id(id: int, session: Session):
-        pass
+        return {"message": f"Client 'id={id}' retrieved successfully"}
     
     @staticmethod
-    def create(client_data: dict, session: Session):
-        pass
+    def create(data: dict, session: Session):
+        return {"message": "Client created successfully", "data": data}
     
     @staticmethod
-    def patch(id: int, client_data: dict, session: Session):
-        pass
+    def patch(id: int, data: dict, session: Session):
+        return {"message": f"Client 'id={id}' updated successfully", "data": data}
     
     @staticmethod
     def delete(id: int, session: Session):
-        # DO SOMETHING
         return {"message": f"Client 'id={id}' deleted successfully"}
