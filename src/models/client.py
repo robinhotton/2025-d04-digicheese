@@ -3,7 +3,6 @@ from sqlmodel import SQLModel, Field
 
 class ClientBase(SQLModel):
     """Schema de base représentant les clients de la fidélisation de la fromagerie."""
-    
     genrecli: str | None = Field(default=None, max_length=8, nullable=True)
     nomcli: str = Field(default=None, max_length=40, index=True)
     prenomcli: str = Field(default=None, max_length=30)
@@ -19,13 +18,13 @@ class ClientBase(SQLModel):
 
 class Client(ClientBase, table=True):
     """Table représentant les clients de la fidélisation de la fromagerie."""
-    
     __tablename__ = "t_client"
-    
     codcli: int | None = Field(default=None, primary_key=True)
+    
     
 class ClientPost(ClientBase):
     pass
+
 
 class ClientPatch(ClientBase):
     nomcli: str | None = Field(default=None, max_length=40, index=True, nullable=True)

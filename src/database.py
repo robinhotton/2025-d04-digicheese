@@ -19,16 +19,16 @@ DATABASE_URL = CONNEXION_STRING.format(**DB_CONFIG)
 engine = create_engine(DATABASE_URL, echo=False)
 
 # déclaration d'une base qui permet après de créer un modèle et de mapper avec SqlModel
-def get_db():
+def get_session():
     """
     Fonction génératrice pour fournir une session de base de données.
     Laisse ouverte la session pour les opérations de base de données et la ferme après utilisation.
     """
-    db = Session(engine, autoflush=False, autocommit=False)
+    session = Session(engine, autoflush=False, autocommit=False)
     try:
-        yield db
+        yield session
     finally:
-        db.close()
-        
+        session.close()
+
 # Il est possible de créer des fonctions utilitaires pour supprimer et recréer la base de données
 # Attention à ne pas essayer de se connecter à la base de données pendant cette opération (DATABASE_URL)
