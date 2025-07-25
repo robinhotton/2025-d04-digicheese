@@ -1,29 +1,32 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .client import Client
 
 class CommuneBase(SQLModel):
-    """Base schema representing French communes."""
-    city_name: str | None = Field(default=None, max_length=50, nullable=False)
-    postal_code: str | None = Field(default=None, max_length=5, nullable=False)
-    departement_id: int | None = Field(default=None, foreign_key="t_departement.id", nullable=True)
-
+    """Schema de base pour les communes françaises."""
+    name: str = Field(max_length=100)
+    postal_code: str = Field(max_length=5, index=True)
+    department_code: str = Field(max_length=3)  # Support DOM-TOM
 
 class Commune(CommuneBase, table=True):
-    """Table représentant les communes associées à un département."""
-    __tablename__ = "t_communes"
+    """Table des communes françaises."""
+    __tablename__ = "communes"
+    
     id: int | None = Field(default=None, primary_key=True)
-    # clients: list["Client"] = Relationship(back_populates="commune")
-    # departement: "Departement" | None = Relationship(back_populates="communes")
+    
+    # Relationships
+    clients: list["Client"] = Relationship(back_populates="commune")
 
-
-class CommunePost(CommuneBase):
+class CommuneCreate(CommuneBase):
     pass
 
+class CommunePatch(SQLModel):
+    """Schema pour la mise à jour d'une commune."""
+    name: str | None = Field(default=None, max_length=100)
+    postal_code: str | None = Field(default=None, max_length=5)
+    department_code: str | None = Field(default=None, max_length=3)
 
-class CommunePatch(CommuneBase):
-    city_name: str | None = Field(default=None, max_length=50, nullable=True)
-    postal_code: str | None = Field(default=None, max_length=5, nullable=True)
-    
-    
 class CommunePublic(CommuneBase):
     id: int

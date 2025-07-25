@@ -5,8 +5,15 @@ from .routers import global_router
 from .database import engine
 from .models import (
     Client,
-    Departement,
-    Commune
+    Commune,
+    Order,
+    OrderItem,
+    Product,
+    ProductCategory,
+    ShippingRate,
+    Role,
+    User,
+    UserRole
 )
 
 app = FastAPI()

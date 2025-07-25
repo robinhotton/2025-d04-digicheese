@@ -1,70 +1,73 @@
-from abc import ABC, abstractmethod
-from sqlmodel import Session
+from abc import ABC
+from sqlmodel import Session, select
+from typing import Type, TypeVar, Generic, Optional
 
-class AbstractRepository(ABC):
+# Type générique pour le modèle
+ModelType = TypeVar('ModelType')
 
-    @staticmethod
-    @abstractmethod
-    def get_all(session: Session, limit: int = 5):
-        """Retrieve all records with an optional limit.
-        
-        Args:
-            session (Session): The database session.
-            limit (int): The maximum number of records to retrieve.
-            
-        Returns:
-            List[dict]: A list of records as dictionaries."""
-        pass
-    
-    @staticmethod
-    @abstractmethod
-    def get_by_id(id: int, session: Session):
-        """Retrieve a record by its ID.
-
-        Args:
-            id (int): The ID of the record to retrieve.
-            session (Session): The database session.
-
-        Returns:
-            dict: The record as a dictionary, or None if not found."""
-        pass
-    
-    @staticmethod
-    @abstractmethod
-    def create(data: dict, session: Session):
-        """Create a new record with the provided data.
-
-        Args:
-            data (dict): The data for the new record.
-            session (Session): The database session.
-
-        Returns:
-            dict: The created record as a dictionary."""
-        pass
-    
-    @staticmethod
-    @abstractmethod
-    def patch(id: int, data: dict, session: Session):
-        """Update partially an existing record by its ID with the provided data.
-
-        Args:
-            id (int): The ID of the record to update.
-            data (dict): The new data for the record.
-            session (Session): The database session.
-
-        Returns:
-            dict: The updated record as a dictionary, or None if not found."""
-        pass
-    
-    @staticmethod
-    @abstractmethod
-    def delete(id: int, session: Session):
-        """Delete a record by its ID.
-
-        Args:
-            id (int): The ID of the record to delete.
-            session (Session): The database session.
-
-        Returns:
-            dict: A message indicating the result of the deletion."""
-        pass
+class AbstractRepository(ABC, Generic[ModelType]):
+    # Attribut à redéfinir dans chaque repository concret
+    model: Type[ModelType]
+    MODEL_NOT_DEFINED_ERROR = "Le modèle doit être défini dans la classe concrète"
+   
+    @classmethod
+    def get_all(cls, session: Session, limit: int = 5) -> list[dict]:
+        """Retrieve all records with an optional limit."""
+        if cls.model is None:
+            raise NotImplementedError(cls.MODEL_NOT_DEFINED_ERROR)
+       
+        statement = select(cls.model).limit(limit)
+        records = session.exec(statement).all()
+        return [dict(record) for record in records]
+   
+    @classmethod
+    def get_by_id(cls, id: int, session: Session) -> dict | None:
+        """Retrieve a record by its ID."""
+        if cls.model is None:
+            raise NotImplementedError(cls.MODEL_NOT_DEFINED_ERROR)
+       
+        record = session.get(cls.model, id)
+        return dict(record) if record else None
+   
+    @classmethod
+    def create(cls, data: dict, session: Session) -> dict:
+        """Create a new record with the provided data."""
+        if cls.model is None:
+            raise NotImplementedError(cls.MODEL_NOT_DEFINED_ERROR)
+       
+        record = cls.model(**data)
+        session.add(record)
+        session.commit()
+        session.refresh(record)
+        return dict(record)
+   
+    @classmethod
+    def patch(cls, id: int, data: dict, session: Session) -> dict | None:
+        """Update partially an existing record by its ID."""
+        if cls.model is None:
+            raise NotImplementedError(cls.MODEL_NOT_DEFINED_ERROR)
+       
+        record = session.get(cls.model, id)
+        if not record:
+            return None
+       
+        # Utilisation de la méthode SQLModel pour l'update
+        record.sqlmodel_update(data)
+        session.add(record)
+        session.commit()
+        session.refresh(record)
+        return dict(record)
+   
+    @classmethod
+    def delete(cls, id: int, session: Session) -> dict:
+        """Delete a record by its ID."""
+        if cls.model is None:
+            raise NotImplementedError(cls.MODEL_NOT_DEFINED_ERROR)
+       
+        record = session.get(cls.model, id)
+        if not record:
+            return {"message": f"Record with id={id} not found"}
+       
+        session.delete(record)
+        session.commit()
+        return {"message": f"Record with id={id} deleted successfully"}

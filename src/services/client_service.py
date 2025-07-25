@@ -1,34 +1,47 @@
+from typing import Any
 from sqlmodel import Session
-from ..repositories import ClientRepository as repository
-from ..models import ClientPost, ClientPatch
+
+from .abstract_service import AbstractService
+from ..repositories import ClientRepository
 
 
-class ClientService:
+class ClientService(AbstractService):
+    repository: ClientRepository = ClientRepository  # C'est tout ce qu'il faut définir !
     
-    @staticmethod
-    def __traitement(data: dict):
-        data["prenom"] = data["prenom"].capitalize()
-        data["nom"] = data["nom"].upper()
-        return data
+    @classmethod
+    def _process_data_for_create(cls, data: Any) -> Any:
+        """Traitement spécifique pour la création de clients."""
+        return cls._traitement_client(data)
     
-    @staticmethod
-    def get_all(limit: int, session: Session):
-        return repository.get_all(limit=limit, session=session)
+    @classmethod
+    def _process_data_for_update(cls, data: Any) -> Any:
+        """Traitement spécifique pour la mise à jour de clients."""
+        return cls._traitement_client(data)
     
-    @staticmethod
-    def get_by_id(id: int, session: Session):
-        return repository.get_by_id(id=id, session=session)
+    @classmethod
+    def _traitement_client(cls, data: Any) -> Any:
+        """Logique métier spécifique aux clients."""
+        # Si c'est un modèle Pydantic, le convertir en dict pour le traitement
+        if hasattr(data, 'model_dump'):
+            data_dict = data.model_dump(exclude_unset=True)
+        else:
+            data_dict = data.copy() if isinstance(data, dict) else data
+        
+        # Traitement des noms
+        if "firstname" in data_dict and data_dict["firstname"]:
+            data_dict["firstname"] = data_dict["firstname"].capitalize()
+        if "lastname" in data_dict and data_dict["lastname"]:
+            data_dict["lastname"] = data_dict["lastname"].upper()
+        
+        return data_dict
     
-    @staticmethod
-    def create(client_data: ClientPost, session: Session):
-        data_traite = ClientService.__traitement(client_data) # model_dump()
-        return repository.create(data=data_traite, session=session)
+    # Méthodes métier spécifiques (optionnelles)
+    @classmethod
+    def get_by_email(cls, email: str, session: Session):
+        """Méthode métier spécifique aux clients."""
+        return cls.repository.get_by_email(email=email, session=session)
     
-    @staticmethod
-    def patch(id: int, client_data: ClientPatch, session: Session):
-        data_traite = ClientService.__traitement(client_data) # model_dump(+option)
-        return repository.patch(id=id, data=data_traite, session=session)
-    
-    @staticmethod
-    def delete(id: int, session: Session):
-        return repository.delete(id=id, session=session)
+    @classmethod
+    def get_active_clients(cls, session: Session):
+        """Récupère les clients actifs."""
+        return cls.repository.get_active_clients(session=session)

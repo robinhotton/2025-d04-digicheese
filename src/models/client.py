@@ -1,37 +1,44 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .commune import Commune
+    from .order import Order
 
 class ClientBase(SQLModel):
-    """Schema de base représentant les clients de la fidélisation de la fromagerie."""
-    firstname: str | None = Field(default=None, max_length=30, nullable=False)
-    lastname: str | None = Field(default=None, max_length=40, index=True, nullable=False)
-    gender: str | None = Field(default=None, max_length=8, nullable=True)
-    commune_id: int | None = Field(default=None, foreign_key="t_communes.id", nullable=True)
-    address_line_1: str | None = Field(default=None, max_length=50, nullable=False)
-    address_line_2: str | None = Field(default=None, max_length=50, nullable=True)
-    address_line_3: str | None = Field(default=None, max_length=50, nullable=True)
-    email: str | None = Field(default=None, max_length=255, nullable=True)
-    phone: str | None = Field(default=None, max_length=10, nullable=True)
-    mobile_phone: str | None = Field(default=None, max_length=10, nullable=True)
-    newsletter: int | None = Field(default=None, nullable=True)
-
+    """Schema de base pour les clients."""
+    firstname: str = Field(max_length=50)
+    lastname: str = Field(max_length=50, index=True)
+    email: str | None = Field(default=None, max_length=255, index=True)
+    phone: str | None = Field(default=None, max_length=15)
+    address_line_1: str = Field(max_length=100)
+    address_line_2: str | None = Field(default=None, max_length=100)
+    commune_id: int | None = Field(default=None, foreign_key="communes.id")
+    newsletter_subscription: bool = Field(default=False)
 
 class Client(ClientBase, table=True):
-    """Table représentant les clients de la fidélisation de la fromagerie."""
-    __tablename__ = "t_client"
-    client_id: int | None = Field(default=None, primary_key=True)
-    # commune: "Commune" | None = Relationship(back_populates="clients")
+    """Table des clients de la fromagerie."""
+    __tablename__ = "clients"
     
+    id: int | None = Field(default=None, primary_key=True)
     
-class ClientPost(ClientBase):
+    # Relationships
+    commune: "Commune" = Relationship(back_populates="clients")
+    orders: list["Order"] = Relationship(back_populates="client")
+
+class ClientCreate(ClientBase):
     pass
 
+class ClientPatch(SQLModel):
+    """Schema pour la mise à jour d'un client."""
+    firstname: str | None = Field(default=None, max_length=50)
+    lastname: str | None = Field(default=None, max_length=50)
+    email: str | None = Field(default=None, max_length=255)
+    phone: str | None = Field(default=None, max_length=15)
+    address_line_1: str | None = Field(default=None, max_length=100)
+    address_line_2: str | None = Field(default=None, max_length=100)
+    commune_id: int | None = Field(default=None)
+    newsletter_subscription: bool | None = Field(default=None)
 
-class ClientPatch(ClientBase):
-    lastname: str | None = Field(default=None, max_length=40, index=True, nullable=True)
-    firstname: str | None = Field(default=None, max_length=30, nullable=True)
-    address_line_1: str | None = Field(default=None, max_length=50, nullable=True)
-    
-    
 class ClientPublic(ClientBase):
-    client_id: int
+    id: int
