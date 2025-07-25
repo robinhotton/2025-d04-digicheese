@@ -3,29 +3,16 @@ from sqlmodel import Session
 
 from .abstract_service import AbstractService
 from ..repositories import ClientRepository
+from ..models import ClientCreate, ClientPatch
 
 
 class ClientService(AbstractService):
-    repository: ClientRepository = ClientRepository  # C'est tout ce qu'il faut définir !
+    repository: ClientRepository = ClientRepository
     
     @classmethod
-    def _process_data_for_create(cls, data: Any) -> Any:
-        """Traitement spécifique pour la création de clients."""
-        return cls._traitement_client(data)
-    
-    @classmethod
-    def _process_data_for_update(cls, data: Any) -> Any:
-        """Traitement spécifique pour la mise à jour de clients."""
-        return cls._traitement_client(data)
-    
-    @classmethod
-    def _traitement_client(cls, data: Any) -> Any:
+    def _process_data(cls, data: ClientCreate | ClientPatch) -> Any:
         """Logique métier spécifique aux clients."""
-        # Si c'est un modèle Pydantic, le convertir en dict pour le traitement
-        if hasattr(data, 'model_dump'):
-            data_dict = data.model_dump(exclude_unset=True)
-        else:
-            data_dict = data.copy() if isinstance(data, dict) else data
+        data_dict = cls._unpack_data(data)
         
         # Traitement des noms
         if "firstname" in data_dict and data_dict["firstname"]:

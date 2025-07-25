@@ -1,14 +1,18 @@
+from os import path
 from sqlmodel import Session, select
 from .abstract_repository import AbstractRepository
 from ..models import Client
 
-class ClientRepository(AbstractRepository[Client]):  # ✅ Ajout du type générique
+class ClientRepository(AbstractRepository[Client]):
     """Repository for Client model, extending the AbstractRepository."""
    
-    # Définition du modèle spécifique pour ce repository
+    # Model Concret
     model = Client
    
-    # Optionnel : surcharger ou ajouter des méthodes spécifiques si besoin
+   ########################
+   # Méthodes spécifiques #
+   ########################
+
     @classmethod
     def get_by_email(cls, email: str, session: Session):
         """Récupère un client par son email."""

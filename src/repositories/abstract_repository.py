@@ -1,14 +1,25 @@
 from abc import ABC
 from sqlmodel import Session, select
-from typing import Type, TypeVar, Generic, Optional
+from typing import Type, TypeVar, Generic
 
-# Type générique pour le modèle
+#################################
+# Type générique pour le modèle #
+#################################
+
 ModelType = TypeVar('ModelType')
 
 class AbstractRepository(ABC, Generic[ModelType]):
-    # Attribut à redéfinir dans chaque repository concret
+    
+    ########################
+    # Attribut à redéfinir #
+    ########################
+    
     model: Type[ModelType]
     MODEL_NOT_DEFINED_ERROR = "Le modèle doit être défini dans la classe concrète"
+   
+    ############################
+    # Méthodes de base du repo #
+    ############################
    
     @classmethod
     def get_all(cls, session: Session, limit: int = 5) -> list[dict]:

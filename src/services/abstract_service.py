@@ -1,15 +1,24 @@
 from abc import ABC
 from sqlmodel import Session
-from typing import Type, TypeVar, Any, Optional
+from typing import Type, TypeVar, Any
 
 # Type générique pour le repository
 RepositoryType = TypeVar('RepositoryType')
 
 class AbstractService(ABC):
-    # Attributs à redéfinir dans chaque service concret
+    """Classe abstraite pour les services, définissant les méthodes génériques."""
+    
+    #########################
+    # Attributs à redéfinir #
+    #########################
+    
     repository: Type[RepositoryType]
     SERVICE_NOT_DEFINED_ERROR = "Le repository doit être défini dans la classe concrète"
-   
+    
+    #########################################
+    # Méthodes génériques pour les services #
+    #########################################
+    
     @classmethod
     def get_all(cls, session: Session, limit: int = 5) -> list[dict]:
         """Retrieve all records with an optional limit."""
@@ -33,7 +42,7 @@ class AbstractService(ABC):
             raise NotImplementedError(cls.SERVICE_NOT_DEFINED_ERROR)
        
         # Traitement des données métier
-        processed_data = cls._process_data_for_create(data)
+        processed_data = cls._process_data(data)
        
         # Conversion en dict si nécessaire
         if hasattr(processed_data, 'model_dump'):
@@ -48,7 +57,7 @@ class AbstractService(ABC):
             raise NotImplementedError(cls.SERVICE_NOT_DEFINED_ERROR)
        
         # Traitement des données métier
-        processed_data = cls._process_data_for_update(data)
+        processed_data = cls._process_data(data)
        
         # Conversion en dict si nécessaire
         if hasattr(processed_data, 'model_dump'):
@@ -63,20 +72,32 @@ class AbstractService(ABC):
             raise NotImplementedError(cls.SERVICE_NOT_DEFINED_ERROR)
        
         return cls.repository.delete(id=id, session=session)
-   
-    # Méthodes de traitement à surcharger dans les services concrets
+    
+    ##############################################
+    # Permet de décomposer les données du schéma #  
+    ##############################################
+    
     @classmethod
-    def _process_data_for_create(cls, data: Any) -> Any:
+    def _unpack_schema(cls, data: Any) -> dict:
         """
-        Process data before creation. Override in concrete services.
+        Unpack the schema if it's a Pydantic model.
+        Override in concrete services to implement specific logic.
         Par défaut, retourne les données sans modification.
         """
-        return data
-   
+        if hasattr(data, 'model_dump'):
+            return data.model_dump(exclude_unset=True)
+        return data.copy() if isinstance(data, dict) else data
+    
+    ##############################################################
+    # Méthodes abstraites à redéfinir dans les services concrets #
+    ##############################################################
+    
     @classmethod
-    def _process_data_for_update(cls, data: Any) -> Any:
+    def _process_data(cls, data: Any) -> dict:
         """
-        Process data before update. Override in concrete services.
+        Process data before creation or update.
+        Override in concrete services to implement specific logic.
         Par défaut, retourne les données sans modification.
         """
-        return data
+        return cls._unpack_schema(data)
+    

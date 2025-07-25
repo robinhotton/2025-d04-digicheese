@@ -1,1 +1,2 @@
 from .client_repository import ClientRepository
+from .commune_repository import CommuneRepository
