@@ -6,3 +6,6 @@ __pycache__/
 # environnement files
 .venv/
 .env
+
+# tests file
+test.db
