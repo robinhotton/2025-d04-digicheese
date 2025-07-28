@@ -16,7 +16,11 @@ class ClientRepository(AbstractRepository):
     
     @staticmethod
     def create(data: dict, session: Session):
-        return {"message": "Client created successfully", "data": data}
+        new_client = Client(**data)
+        session.add(new_client)
+        session.commit()
+        session.refresh(new_client)
+        return new_client
     
     @staticmethod
     def patch(id: int, data: dict, session: Session):

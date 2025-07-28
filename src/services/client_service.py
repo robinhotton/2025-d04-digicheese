@@ -6,9 +6,10 @@ from ..models import ClientPost, ClientPatch
 class ClientService:
     
     @staticmethod
-    def __traitement(data: dict):
-        data["prenom"] = data["prenom"].capitalize()
-        data["nom"] = data["nom"].upper()
+    def __traitement(data: ClientPost | ClientPatch) -> dict:
+        data = data.model_dump()
+        data["firstname"] = data["firstname"].capitalize()
+        data["lastname"] = data["lastname"].upper()
         return data
     
     @staticmethod
@@ -20,8 +21,8 @@ class ClientService:
         return repository.get_by_id(id=id, session=session)
     
     @staticmethod
-    def create(client_data: ClientPost, session: Session):
-        data_traite = ClientService.__traitement(client_data) # model_dump()
+    def create(data: ClientPost, session: Session):
+        data_traite = ClientService.__traitement(data) # model_dump()
         return repository.create(data=data_traite, session=session)
     
     @staticmethod

@@ -23,9 +23,9 @@ def get_client_by_id(id: int, session: Session = Depends(get_session)):
     return client
 
 
-@router.post("/", response_model=ClientPublic)
-def create_client(client_data: ClientPost, session: Session = Depends(get_session)):
-    return service.create(data=client_data, session=session)
+@router.post("/", response_model=ClientPublic, status_code=status.HTTP_201_CREATED)
+def create_client(data: ClientPost, session: Session = Depends(get_session)):
+    return service.create(data=data, session=session)
 
 
 @router.patch("/{id}", response_model=ClientPublic)
