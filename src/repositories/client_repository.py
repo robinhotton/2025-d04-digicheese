@@ -12,7 +12,11 @@ class ClientRepository(AbstractRepository):
     
     @staticmethod
     def get_by_id(id: int, session: Session):
-        return {"message": f"Client 'id={id}' retrieved successfully"}
+        statement = select(Client).where(Client.client_id == id)
+        client = session.exec(statement).first()
+        if not client:
+            return None
+        return dict(client)
     
     @staticmethod
     def create(data: dict, session: Session):
@@ -24,8 +28,25 @@ class ClientRepository(AbstractRepository):
     
     @staticmethod
     def patch(id: int, data: dict, session: Session):
-        return {"message": f"Client 'id={id}' updated successfully", "data": data}
+        statement = select(Client).where(Client.client_id == id)
+        client = session.exec(statement).first()
+        if not client:
+            return None
+        
+        for key, value in data.items():
+            setattr(client, key, value)
+        
+        session.add(client)
+        session.commit()
+        session.refresh(client)
+        return client
     
     @staticmethod
     def delete(id: int, session: Session):
+        statement = select(Client).where(Client.client_id == id)
+        client = session.exec(statement).first()
+        if not client:
+            return None
+        session.delete(client)
+        session.commit()
         return {"message": f"Client 'id={id}' deleted successfully"}

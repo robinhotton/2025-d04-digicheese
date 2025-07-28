@@ -17,14 +17,16 @@ def test_create_client(client: TestClient):
     new_client = {
         "firstname": "john",
         "lastname": "doe",
-        "address_line_1": "123 Main St"
+        "address_line_1": "123 Main St",
+        "newsletter": 1
     }
     result: Response = client.post(f"{BASE_URL}/clients", json=new_client)
     assert result.status_code == 201
     created_client: dict = result.json()
-    assert created_client["firstname"] == new_client["firstname"].capitalize()
-    assert created_client["lastname"] == new_client["lastname"].upper()
-    assert created_client["address_line_1"] == new_client["address_line_1"]
+    assert created_client["firstname"] == "John"
+    assert created_client["lastname"] == "DOE"
+    assert created_client["address_line_1"] == "123 Main St"
+    assert created_client["newsletter"] == True
 
 def test_patch_client(client: TestClient):
     pass

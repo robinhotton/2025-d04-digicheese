@@ -13,6 +13,8 @@ from sqlmodel import create_engine, Session, SQLModel
 from src.main import app
 from src.database import get_session
 from src.models.client import Client as ClientModel
+from src.models.commune import Commune
+from src.models.departement import Departement
 
 ############
 # Fixtures #
@@ -30,12 +32,28 @@ def test_session():
     SQLModel.metadata.create_all(engine)
     
     with Session(engine) as session:
-        john_doe = ClientModel(firstname="John", lastname="Doe", address_line_1="123 Cheese St")
-        session.add(john_doe)
+        # Création d'un client
+        robin = ClientModel(firstname="Robin", lastname="HOTTON", address_line_1="1 rue de la Paix")
+        session.add(robin)
+        
+        # Création d'une commune
+        wervicq = Commune(city_name="Wervicq-Sud", postal_code="59117")
+        session.add(wervicq)
+        
+        # Création d'un département
+        nord = Departement(department_name="Nord", department_code="59")
+        session.add(nord)
+        
+        # Association des entités
+        robin.commune = wervicq
+        wervicq.departement = nord
+        
+        # Commit les changements
         session.commit()
         
         # Retourne la session de test
         yield session
+
 
 @pytest.fixture(scope="function")
 def client(test_session):
