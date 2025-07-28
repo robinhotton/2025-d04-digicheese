@@ -1,1 +1,3 @@
 example
+une modification
+--- a/vscode-scm:git/scm0/input?rootUri%3Dfile
