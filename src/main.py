@@ -10,8 +10,9 @@ from .models import (
 )
 
 app = FastAPI()
-app.include_router(global_router)
+SQLModel.metadata.drop_all(bind=engine)
 SQLModel.metadata.create_all(bind=engine)
+app.include_router(global_router)
 
 @app.get("/")
 def home():

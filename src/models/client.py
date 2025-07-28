@@ -1,4 +1,8 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .commune import Commune
 
 
 class ClientBase(SQLModel):
@@ -20,7 +24,7 @@ class Client(ClientBase, table=True):
     """Table représentant les clients de la fidélisation de la fromagerie."""
     __tablename__ = "t_client"
     client_id: int | None = Field(default=None, primary_key=True)
-    # commune: "Commune" | None = Relationship(back_populates="clients")
+    commune: Optional["Commune"] = Relationship(back_populates="clients")
     
     
 class ClientPost(ClientBase):

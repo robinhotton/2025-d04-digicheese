@@ -1,4 +1,8 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .commune import Commune
 
 
 class DepartementBase(SQLModel):
@@ -11,7 +15,7 @@ class Departement(DepartementBase, table=True):
     """Table représentant les départements français."""
     __tablename__ = "t_departement"
     id: int | None = Field(default=None, primary_key=True)
-    # communes: list["Commune"] = Relationship(back_populates="departement")
+    communes: list["Commune"] = Relationship(back_populates="departement")
     
     
 class DepartementPost(DepartementBase):
