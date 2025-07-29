@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.get("/", response_model=list[ClientPublic])
 def get_clients(limit: int = 5, session: Session = Depends(get_session)):
-    return service.get_all(session=session, limit=limit)
+    return service.get_all(limit=limit, session=session)
 
 
 @router.get("/{id}", response_model=ClientPublic)

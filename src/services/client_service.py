@@ -6,10 +6,20 @@ from ..models import ClientPost, ClientPatch
 class ClientService:
     
     @staticmethod
-    def __traitement(data: ClientPost | ClientPatch) -> dict:
-        data = data.model_dump()
-        data["firstname"] = data["firstname"].capitalize()
-        data["lastname"] = data["lastname"].upper()
+    def _traitement(data: ClientPost | ClientPatch, patch: bool = True) -> dict:
+        # Drop unset fields if patching
+        if patch:
+            data = data.model_dump(exclude_unset=True)
+        else:
+            data = data.model_dump()
+        
+        # Example processing: Capitalize first name and uppercase last name
+        if "firstname" in data and isinstance(data["firstname"], str):
+            data["firstname"] = data["firstname"].capitalize()
+        if "lastname" in data and isinstance(data["lastname"], str):
+            data["lastname"] = data["lastname"].upper()
+            
+        # Return the processed data
         return data
     
     @staticmethod
@@ -22,12 +32,12 @@ class ClientService:
     
     @staticmethod
     def create(data: ClientPost, session: Session):
-        data_traite = ClientService.__traitement(data) # model_dump()
+        data_traite = ClientService._traitement(data)
         return repository.create(data=data_traite, session=session)
     
     @staticmethod
     def patch(id: int, client_data: ClientPatch, session: Session):
-        data_traite = ClientService.__traitement(client_data) # model_dump(+option)
+        data_traite = ClientService._traitement(client_data)
         return repository.patch(id=id, data=data_traite, session=session)
     
     @staticmethod
