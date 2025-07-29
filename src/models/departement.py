@@ -7,14 +7,16 @@ if TYPE_CHECKING:
 
 class DepartementBase(SQLModel):
     """Base schema representing French departments."""
-    department_code: str | None = Field(default=None, max_length=2 , nullable=False)
-    department_name: str | None = Field(default=None, max_length=50, nullable=False)
+    department_code: str = Field(max_length=2, index=True)
+    department_name: str = Field(max_length=50)
 
 
 class Departement(DepartementBase, table=True):
     """Table représentant les départements français."""
     __tablename__ = "t_departement"
     id: int | None = Field(default=None, primary_key=True)
+    
+    # Relationships
     communes: list["Commune"] = Relationship(back_populates="departement")
     
     
@@ -23,8 +25,8 @@ class DepartementPost(DepartementBase):
 
 
 class DepartementPatch(DepartementBase):
-    department_code: str | None = Field(default=None, max_length=2 , nullable=True)
-    department_name: str | None = Field(default=None, max_length=50, nullable=True)
+    department_code: str | None = Field(default=None, max_length=2)
+    department_name: str | None = Field(default=None, max_length=50)
 
 
 class DepartementPublic(DepartementBase):

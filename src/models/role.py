@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .user_role import UserRole
+    from .user import User
 
 class RoleBase(SQLModel):
     """Schema de base pour les rôles utilisateur."""
@@ -16,9 +17,10 @@ class Role(RoleBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     
     # Relationships
-    user_roles: list["UserRole"] = Relationship(back_populates="role")
+    users: list["User"] = Relationship(back_populates="roles", link_model=UserRole)
 
 class RoleCreate(RoleBase):
+    """Schema pour la création d'un rôle."""
     pass
 
 class RolePatch(SQLModel):
@@ -27,4 +29,5 @@ class RolePatch(SQLModel):
     description: str | None = Field(default=None, max_length=255)
 
 class RolePublic(RoleBase):
+    """Schema public pour les rôles utilisateur."""
     id: int
