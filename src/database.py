@@ -16,7 +16,7 @@ CONNEXION_STRING = "{connector}://{username}:{password}@{host}:{port}/{database}
 DATABASE_URL = CONNEXION_STRING.format(**DB_CONFIG)
 
 # Moteur de base de données
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(DATABASE_URL, echo=True)
 
 # déclaration d'une base qui permet après de créer un modèle et de mapper avec SqlModel
 def get_session():

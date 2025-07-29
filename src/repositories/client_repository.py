@@ -1,4 +1,3 @@
-from os import path
 from sqlmodel import Session, select
 from .abstract_repository import AbstractRepository
 from ..models import Client
